@@ -1,4 +1,5 @@
 from logpy import run, var, eq as unify, conde, Relation, fact
+from logpy.goals import conso
 from logpy.core import success, fail
 
 
@@ -8,7 +9,7 @@ def eq(a, b):
     I'm used to using this in my tests, and unused to unify being
     called eq, so I switched these around. Sorry.
     """
-    assert a == b
+    assert a == b, "%s not equal to %s" % (a, b)
 
 
 def test1():
@@ -79,3 +80,27 @@ def test_rs1_56():
                      (unify("cup", x),))
     x = var()
     eq(("tea", "cup"), run(0, x, teacupo(x)))
+
+
+def mvars(n):
+    return tuple(var() for _ in range(n))
+
+
+def cons(a, l):
+    print a, type(a), l, type(l)
+    return tuple((a, ) + l)
+
+
+# def test_rs2_10():  # Doesn't work
+#     r, x, y = mvars(3)
+#     print run(0, r,
+#               (heado, ("grape", "raisin", "pear"), x),
+#               (heado, (("a",), ("b",), ("c",)), y),
+#               (conde, [(eq, x, r[0]), (eq, y, r[1:])]))
+    
+
+def test_rs2_24():
+    r, x, y, z = mvars(4)
+    eq((("e", "a", "d", "c"),), run(0, r,
+                                    unify(("e", "a", "d", x), r),
+                                    conso(y, ("a", z, "c"), r)))
